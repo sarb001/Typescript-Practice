@@ -7,7 +7,7 @@ import { useEffect, useState } from "react";
 export const MainProductsSection = () => {
 
      const dispatch = useAppDispatch();
-     const {   isLoading , data , isError } = useAppSelector(state => state?.product);
+     const {   isLoading , data , isError , FilterProducts } = useAppSelector(state => state?.product);
 
      useEffect(() => {
         dispatch(FetchProduct());
@@ -26,7 +26,7 @@ export const MainProductsSection = () => {
              <div> Total Products -  {data?.length} </div> 
             <div className="grid grid-cols-3 gap-6">
                 
-                {data?.map(i => {
+                {FilterProducts?.map(i => {
                     return (
                         <div key = {Number(i?.id)} className="bg-slate-400 px-2 my-2">
                             <div>  

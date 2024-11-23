@@ -1,6 +1,6 @@
 import { useEffect } from "react";
 import { useAppDispatch, useAppSelector } from "../hooks/tshooks";
-import { FetchProduct,  filterByBrands,  filterByCategory, filterByRating  } from "../slices/ProductSlice";
+import { FetchProduct,  UpdateFilter  } from "../slices/ProductSlice";
 
 
 export const Sidebar = () => {
@@ -39,7 +39,11 @@ export const Sidebar = () => {
                  <div className="flex flex-row flex-wrap gap-4">
 
                     {UniqueCategory?.map(i =>   
-                    <button className="bg-slate-400 px-1 mx-2" onClick={() => dispatch(filterByCategory(i))}>
+                    <button className="bg-slate-400 px-1 mx-2" onClick={() => 
+                    dispatch(UpdateFilter({
+                        type : 'category',
+                        value : i
+                    }))}>
                          {i.toUpperCase()} 
                     </button> )}
                 
@@ -50,7 +54,10 @@ export const Sidebar = () => {
                 <div className="text-3xl py-4"> Filter By Brand  </div>
                 <div className="flex flex-row flex-wrap gap-4">
                     {AllBrands?.map(i =>   
-                    <button className="bg-slate-400 px-1 mx-2" onClick={() => dispatch(filterByBrands(i))}>
+                    <button className="bg-slate-400 px-1 mx-2" onClick={() => dispatch(UpdateFilter({
+                        type : 'brands',
+                        value : i
+                    }))}>
                        {i.toUpperCase()}
                     </button> )}
                  </div>
@@ -60,8 +67,11 @@ export const Sidebar = () => {
                 <div className="text-3xl py-4"> Filter By Rating  </div>
                 <div className="flex flex-row flex-wrap gap-4">
                     {AllRating?.map(i =>   
-                    <button className="bg-slate-400 px-1 mx-2" onClick={() => dispatch(filterByRating(i))}>
-                       {i}
+                    <button className="bg-slate-400 px-1 mx-2" onClick={() => dispatch(UpdateFilter({
+                        type : 'rating',
+                        value : i
+                    }))}>
+                      Less than  {i} Star
                     </button> )}
                  </div>
             </div>

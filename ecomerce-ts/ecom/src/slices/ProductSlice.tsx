@@ -1,4 +1,4 @@
-import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
+import { createAsyncThunk, createSlice, PayloadAction } from "@reduxjs/toolkit";
 import axios from "axios";
 
 type Products =   {
@@ -11,7 +11,6 @@ type Products =   {
     brand : string,
 }
 
-
 export type initState = {
     isLoading : boolean,
     data: Products[],
@@ -21,6 +20,7 @@ export type initState = {
         category : string | null;
         brands : string | null;
         rating : string | null;
+        price : number | null;
     }
 }
 
@@ -40,6 +40,7 @@ export const initialState : initState = {
     activeFilters : {
         category : null,
         brands : null,
+        price : null,
         rating : null
     }
 }
@@ -56,55 +57,56 @@ export const FetchProduct = createAsyncThunk("/" , async () => {
     }
 })
 
-// SIngle filter Critiera Done
+// Single filter Critiera Done
 
-// ---- Now Applying Filter on Left Products
-
-
-export const applyFilters = (state:initState) => {
-    let result = [...state.data];
-
-    if (state.activeFilters.category) {
-        result = result.filter(product => 
-          product.category === state.activeFilters.category
-        );
-    }
-
-    if (state.activeFilters.brands) {
-        result = result.filter(product => 
-          product.brand === state.activeFilters.brands
-        );
-    }
-
-    if (state.activeFilters.rating) {
-        result = result.filter(i => i?.rating <= Number(state.activeFilters.rating))
-    }
-
-    state.FilterProducts = result;
-
-}
-
+// ---- Now Applying Filter in Sequencential Products
 
 export const ProductSlice  = createSlice({
     name : 'products',
     initialState,
-    reducers : {
+    reducers : {    
+      UpdateFilter : (state:initState,action: PayloadAction<{
+        type : 'category' | 'brands' | 'price' | 'rating';
+        value : any;
+    }>) => {
 
-        filterByCategory : (state,action) => {
-            state.activeFilters.category = action.payload; 
-            applyFilters(state);
-        },
+        const { type ,value } = action.payload;
 
-        filterByBrands : (state,action) => {
-            state.activeFilters.brands = action.payload; 
-            applyFilters(state);
-        },
-
-        filterByRating : (state,action) => {
-            state.activeFilters.rating = action.payload; 
-            applyFilters(state);
+            // specific for Price 
+        if(type === 'price'){
+            state.activeFilters.price = value;    
+            console.log('with val -',state.activeFilters.price= value)      // 
+        }else{
+            state.activeFilters[type] = value;
+            console.log('with type -',state.activeFilters[type] = value)      // 
         }
+
+        let result = [...state.data];
+
+        if (state.activeFilters.category) {
+            result = result.filter(product => 
+            product.category === state.activeFilters.category
+            );
+            console.log(`After category filter: ${result.length} products`);
+        }
+
+        if (state.activeFilters.brands) {
+            result = result.filter(product => 
+            product.brand === state.activeFilters.brands
+            );
+            console.log(`After Brand filter: ${result.length} products`);
+        }
+
+        if (state.activeFilters.rating) {
+            result = result.filter(i => i?.rating < Number(state.activeFilters.rating));
+            console.log(`After Rating filter: ${result.length} products`);
+        
+        }
+
+        state.FilterProducts = result;
     },
+},
+
     extraReducers : (builder) => {
         builder.addCase(FetchProduct.pending ,  (state,action) => {
                 state.isLoading = true;
@@ -121,5 +123,5 @@ export const ProductSlice  = createSlice({
 })
 
 
-export const { filterByCategory , filterByBrands ,filterByRating } = ProductSlice.actions;
+export const { UpdateFilter } = ProductSlice.actions;
 export default ProductSlice.reducer
