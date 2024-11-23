@@ -56,6 +56,11 @@ export const FetchProduct = createAsyncThunk("/" , async () => {
     }
 })
 
+// SIngle filter Critiera Done
+
+// ---- Now Applying Filter on Left Products
+
+
 export const applyFilters = (state:initState) => {
     let result = [...state.data];
 
